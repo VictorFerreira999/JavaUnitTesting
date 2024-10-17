@@ -1,5 +1,6 @@
+package com.snack.services;
+
 import com.snack.entities.Product;
-import com.snack.services.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,15 +39,12 @@ public class ProductServiceTest {
 
     @Test
     public void TestarAtualizacaoDeProdutoExistente() {
-        // Primeiro, salva o produto
         productService.save(product1);
 
-        // Agora, cria um novo produto com a mesma ID e outra imagem (usando o mesmo caminho, mas poderia ser diferente)
         Product updatedProduct = new Product(1, "Hotdog Deluxe", 6.00f, validImagePath);
 
-        productService.update(updatedProduct);
+        productService.update(updatedProduct); //verificar no metodo no sirvice
 
-        // Verifica se a imagem foi atualizada
         File updatedImage = new File(updatedProduct.getImage());
         assertTrue(updatedImage.exists());
     }
