@@ -53,10 +53,12 @@ public class ProductServiceTest {
     public void TestarRemocaoDeProdutoExistente() {
         productService.save(product1);
         productService.remove(product1.getId());
-
-        File imageFile = new File(product1.getImage());
-        assertFalse(imageFile.exists());
+        String imagePath = productService.getImagePathById(product1.getId());
+        File imageFile = new File(imagePath);
+        assertFalse(imageFile.exists(), "A imagem deve ser removida junto com o produto.");
     }
+
+
 
     @Test
     public void TestarObterCaminhoDaImagemPorId() {
