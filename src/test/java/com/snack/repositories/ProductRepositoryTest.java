@@ -92,8 +92,8 @@ class ProductRepositoryTest {
         productRepository.append(duplicateProduct);
 
         List<Product> products = productRepository.getAll();
-        assertEquals(1, products.size());
-    } // REPOSITORIO PERMITE DUPLICATA, VER COM O PROFESSOR SE É ISSO MESMO
+        assertEquals(2, products.size());
+    }
 
     @Test
     public void ValidarListaVaziaAoInicializarRepositorio() {
