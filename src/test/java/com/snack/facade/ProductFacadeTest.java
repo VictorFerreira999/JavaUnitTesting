@@ -1,7 +1,8 @@
-package com.snack.facade;
+package com.snack.facades;
 
 import com.snack.applications.ProductApplication;
 import com.snack.entities.Product;
+import com.snack.facade.ProductFacade;
 import com.snack.repositories.ProductRepository;
 import com.snack.services.ProductService;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,82 +11,93 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ProductFacadeTest {
-
     private ProductFacade productFacade;
     private ProductApplication productApplication;
     private ProductRepository productRepository;
     private ProductService productService;
+    private Product product1;
+    private Product product2;
 
     @BeforeEach
     public void setup() {
-        // Inicialize as classes reais
-        productRepository = new ProductRepository(); // Repositório real
-        productService = new ProductService();       // Serviço real
-        productApplication = new ProductApplication(productRepository, productService); // Aplicação real
-        productFacade = new ProductFacade(productApplication);  // Facade usando a aplicação
+        productRepository = new ProductRepository();
+        productService = new ProductService();
+        productApplication = new ProductApplication(productRepository, productService);
+        productFacade = new ProductFacade(productApplication);
+
+        product1 = new Product(1, "Hot Dog", 10.4f, "C:\\Users\\emanu\\OneDrive\\Imagens\\teste\\cachorro.jpeg");
+        product2 = new Product(2, "Pastel", 12.4f, "C:\\Users\\emanu\\OneDrive\\Imagens\\teste\\pastel.jpeg");
     }
 
     @Test
-    public void retornarListaCompletaDeProdutosAoChamarMetodoGetAll() {
-        Product product1 = new Product(1, "Hotdog", 5.00f, "hotdog.jpeg");
-        Product product2 = new Product(2, "Burger", 7.50f, "burger.jpeg");
-
-        // Adiciona os produtos diretamente no repositório real
+    public void retornarAListaCompletaDeProdutosAoChamarOMetodoGetAll(){
         productFacade.append(product1);
         productFacade.append(product2);
 
-        List<Product> productList = productFacade.getAll();
+        List<Product> products = productFacade.getAll();
 
-        assertEquals(2, productList.size());
-        assertEquals("Hotdog", productList.get(0).getDescription());
-        assertEquals("Burger", productList.get(1).getDescription());
+        assertNotNull(products);
+        assertEquals(2, products.size());
+        assertEquals(product1, products.get(0));
+        assertEquals(product2, products.get(1));
+
     }
 
     @Test
-    public void retornarProdutoCorretoAoFornecerIdValidoNoMetodoGetById() {
-        Product product = new Product(1, "Hotdog", 5.00f, "hotdog.jpeg");
+    public void retornarOProdutoCorretoAoFornecerUmIDValidoNoMetodoGetById (){
+        productFacade.append(product1);
 
-        productFacade.append(product);
+        Product productId1 = productFacade.getById(1);
 
-        Product result = productFacade.getById(1);
-
-        assertNotNull(result);
-        assertEquals(1, result.getId());
-        assertEquals("Hotdog", result.getDescription());
+        assertEquals(productId1, product1);
     }
 
     @Test
-    public void retornarTrueParaIdExistenteEFalseParaIdInexistenteNoMetodoExists() {
-        Product product = new Product(1, "Hotdog", 5.00f, "hotdog.jpeg");
+    public void retornarTrueParaUmIDExistenteEFalseParaUmIDInexistenteNoMetodoExists (){
+        productFacade.append(product1);
 
-        productFacade.append(product);
+        boolean exists = productFacade.exists(1);
+        boolean notExistent = productFacade.exists(3);
 
-        assertTrue(productFacade.exists(1));
-        assertFalse(productFacade.exists(999));
+        assertTrue(exists);
+        assertFalse(notExistent);
     }
 
     @Test
-    public void adicionarNovoProdutoCorretamenteAoChamarMetodoAppend() {
-        Product product = new Product(1, "Hotdog", 5.00f, "hotdog.jpeg");
+    public void adicionarUmNovoProdutoCorretamenteAoChamarMetodoAppend (){
+        productFacade.append(product1);
 
-        productFacade.append(product);
+        List<Product> products = productFacade.getAll();
 
-        Product result = productFacade.getById(1);
+        assertNotNull(products);
+        assertEquals(1, products.size());
+        assertEquals(product1, products.get(0));
 
-        assertNotNull(result);
-        assertEquals("Hotdog", result.getDescription());
     }
 
     @Test
-    public void removerProdutoExistenteAoFornecerIdValidoNoMetodoRemove() {
-        Product product = new Product(1, "Hotdog", 5.00f, "hotdog.jpeg");
+    public void removerUmProdutoExistenteAoFornecerUmIDValidoNoMetodoRemove (){
+        productFacade.append(product1);
+        productFacade.append(product2);
 
-        productFacade.append(product);
+        List<Product> products = productFacade.getAll();
+        boolean product1Exists = productFacade.exists(1);
 
-        productFacade.remove(1);
+        assertEquals(2, products.size());
+        assertTrue(product1Exists);
 
-        assertNull(productFacade.getById(1));  // Após remover, o produto não deve mais existir
+        products.remove(product1);
+        boolean product1StillExists = productFacade.exists(1);
+
+        assertEquals(1, products.size());
+        assertFalse(product1StillExists);
     }
 }
+
+
+
+
+
